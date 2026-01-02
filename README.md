@@ -2,29 +2,56 @@
 
 Optimize edilmiş, yüksek performanslı volatilite analiz aracı.
 
-## Özellikler
-- Gerçek zamanlı veri analizi
+## 🚀 Canlı Demo
+[https://kullanici-adiniz.github.io/volatility-analyzer/](https://kullanici-adiniz.github.io/volatility-analyzer/)
+
+## ✨ Özellikler
+- Gerçek zamanlı piyasa analizi
 - Trend tahmin algoritmaları
 - Auto-trade entegrasyonu
-- Responsive tasarım
+- İleri seviye grafik görselleştirme
+- Mobil uyumlu tasarım
 - Arka planda çalışabilme
 - Hiç donmadan sürekli analiz
 
-## Teknolojiler
+## ⚡ Teknolojiler
 - HTML5 Canvas
-- WebSocket
+- WebSocket API
 - Web Workers
 - Service Workers
 - Chart.js
+- Binary.com API
 
-## Demo
-GitHub Pages üzerinden erişilebilir.
+## 📊 Performans İyileştirmeleri
+- **%85-95** daha hızlı render
+- **0 donma** sorunu
+- Arka planda **7/24 çalışabilme**
+- Mobil cihazlarda sorunsuz çalışma
+- Düşük CPU ve pil tüketimi
 
-## Kurulum
-Sadece `index.html` dosyasını açın veya GitHub Pages linkini kullanın.
+## 🛠️ Kurulum
+1. `index.html` dosyasını açın
+2. API token'ınızı girin
+3. Analiz çiftini seçin
+4. Start butonuna basın
 
-## Performans
-- %85-95 daha hızlı
+Veya GitHub Pages linkini kullanın.
+
+## 📱 Mobil Kullanım
+- Responsive tasarım
+- Touch-friendly arayüz
 - Arka planda çalışabilir
-- Mobil uyumlu
-- Hiç donma yok
+- PWA olarak yüklenebilir
+
+## 🔧 Geliştirme
+Proje tamamen optimize edilmiş durumda:
+- Web Workers ile ağır işlemler
+- Service Worker ile arka plan çalışması
+- RequestAnimationFrame ile smooth render
+- Memory optimization
+
+## 📞 Destek
+Sorunlar için GitHub Issues kullanın.
+
+---
+**Optimized with ❤️ for maximum performance**
