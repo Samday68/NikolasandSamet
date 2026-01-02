@@ -531,7 +531,7 @@
       height: 50px; 
     }
     
-    @media (max-width: 768px) { 
+    @media (max-width: 768box) { 
       #trendAngleCanvas { height: 38px; } 
     }
     
@@ -1076,6 +1076,7 @@
     let tradeData = [];
     let contractId = null;
     let chart = null;
+    let lastStartGlobal = -100; // FIX: Başlangıç değeri
 
     // Yeni performans değişkenleri
     let analysisWorker = null;
@@ -1104,7 +1105,7 @@
             }
             
             if (type === 'PROCESS_GRID') {
-              const result = processGridData(data.decimalDigits, data.numColors, data.xzTickCounter);
+              const result = processGridData(data.decimalDigits, data.numColors, data.xzTickCounter, data.lastStartGlobal);
               self.postMessage({ type: 'GRID_RESULT', result: result });
             }
           };
@@ -1151,7 +1152,6 @@
               else if (redCount >= 2 && compare13 === 'down') trendDirection = 'DOWN';
             }
             
-            // Tüm trend verilerini döndürüyoruz
             return {
               direction: trendDirection,
               last3: [v1, v2, v3],
@@ -1174,7 +1174,7 @@
             return null;
           }
           
-          function processGridData(decimalDigits, numColors, xzTickCounter) {
+          function processGridData(decimalDigits, numColors, xzTickCounter, lastStartGlobal) {
             const vis = Math.min(11, decimalDigits.length);
             if (vis <= 0) return { gridHistory: [], startGlobalSpan: null };
             
@@ -1206,20 +1206,25 @@
             }
             
             let startGlobalSpan = null;
-            if (newHist.length >= 3) {
-              const n = newHist.length;
-              const a = newHist[n - 3].v;
-              const b = newHist[n - 2].v;
-              const c = newHist[n - 1].v;
-              const cond1 = (a % 2 === 0) && (b % 2 === 0) && (c % 2 !== 0);
-              const cond2 = (a % 2 !== 0) && (b % 2 !== 0) && (c % 2 === 0);
-              
-              if (cond1 || cond2) {
-                const firstGlobal = xzTickCounter - vis;
-                startGlobalSpan = { 
-                  from: firstGlobal + (n - 3), 
-                  to: firstGlobal + (n - 1) 
-                };
+            
+            // COOLDOWN KONTROLÜ: Eğer son start'tan bu yana 6 tik geçmediyse yeni start arama
+            const ticksSinceLastStart = xzTickCounter - lastStartGlobal;
+            if (ticksSinceLastStart >= 6) {
+              if (newHist.length >= 3) {
+                const n = newHist.length;
+                const a = newHist[n - 3].v;
+                const b = newHist[n - 2].v;
+                const c = newHist[n - 1].v;
+                const cond1 = (a % 2 === 0) && (b % 2 === 0) && (c % 2 !== 0);
+                const cond2 = (a % 2 !== 0) && (b % 2 !== 0) && (c % 2 === 0);
+                
+                if (cond1 || cond2) {
+                  const firstGlobal = xzTickCounter - vis;
+                  startGlobalSpan = { 
+                    from: firstGlobal + (n - 3), 
+                    to: firstGlobal + (n - 1) 
+                  };
+                }
               }
             }
             
@@ -1250,7 +1255,6 @@
               showTrendSignal(result.direction);
               requestAnimationFrame(drawTrendAngle);
               
-              // UP/DOWN analizini tetikle
               if (currentTrendData.arrows && currentTrendData.arrows.length > 0) {
                 analyzeUpDownSignalInWorker(currentTrendData.arrows);
               }
@@ -1270,9 +1274,10 @@
           
           if (type === 'GRID_RESULT') {
             gridHistory = result.gridHistory;
+            
             if (result.startGlobalSpan) {
               startGlobalSpan = result.startGlobalSpan;
-              startCooldown = 6;
+              lastStartGlobal = xzTickCounter; // FIX: Yeni start bulunduğunda kaydet
               trendStartGlobal = result.startGlobalSpan.to;
             }
             
@@ -1697,6 +1702,7 @@
       gridHistory = [];
       startCooldown = 0;
       startGlobalSpan = null;
+      lastStartGlobal = -100; // FIX: Sıfırla
       xzTickCounter = 0;
       currentTrendData = { direction: null, last3: [], colors: [], arrows: [] };
       lastTrendSignal = null;
@@ -1843,7 +1849,8 @@
           data: { 
             decimalDigits, 
             numColors, 
-            xzTickCounter 
+            xzTickCounter,
+            lastStartGlobal // FIX: Cooldown için gönder
           }
         });
       }
